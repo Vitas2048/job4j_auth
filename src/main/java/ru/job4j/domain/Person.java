@@ -1,4 +1,4 @@
-package ru.job4j.job4j_auth.domain;
+package ru.job4j.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

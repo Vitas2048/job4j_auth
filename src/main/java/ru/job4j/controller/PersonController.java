@@ -1,11 +1,12 @@
-package ru.job4j.job4j_auth.controller;
+package ru.job4j.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.job4j.job4j_auth.domain.Person;
-import ru.job4j.job4j_auth.repository.PersonRepository;
+import ru.job4j.domain.Person;
+import ru.job4j.repository.PersonRepository;
+import ru.job4j.service.PersonService;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PersonController {
 
-    private final PersonRepository persons;
+    private final PersonService persons;
 
     @GetMapping("/")
     public List<Person> findAll() {
@@ -32,22 +33,26 @@ public class PersonController {
 
     @PostMapping("/")
     public ResponseEntity<Person> create(@RequestBody Person person) {
-        return new ResponseEntity<Person>(
-                persons.save(person), HttpStatus.CREATED
-        );
+        return persons.save(person) == null
+                ? ResponseEntity.ok().build()
+                : new ResponseEntity<Person>(persons.save(person), HttpStatus.CREATED);
     }
 
     @PutMapping("/")
     public ResponseEntity<Void> update(@RequestBody Person person) {
-        persons.save(person);
-        return ResponseEntity.ok().build();
+           return persons.save(person) == null
+                   ? ResponseEntity.ok().build()
+                   : ResponseEntity.internalServerError().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete (@PathVariable int id) {
+    public ResponseEntity<Void> delete(@PathVariable int id) {
         Person person = new Person();
         person.setId(id);
+        var res = persons.findById(id);
         persons.delete(person);
-        return ResponseEntity.ok().build();
+        return res.isPresent()
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.internalServerError().build();
     }
 }
