@@ -59,6 +59,16 @@ public class UserController {
 
     }
 
+    @PatchMapping("/patch")
+    public ResponseEntity<String> patch(@RequestBody Person person) {
+        if (person.getUsername().isEmpty() || person.getPassword().isEmpty()) {
+            throw new NullPointerException("Login or password is empty");
+        }
+        return persons.save(person) == null
+                ? ResponseEntity.internalServerError().build()
+                : ResponseEntity.ok().build();
+    }
+
     @ExceptionHandler(value = {Exception.class})
     public void exceptionHandler(Exception e, HttpServletRequest req, HttpServletResponse res) throws IOException {
         res.setStatus(HttpStatus.BAD_REQUEST.value());

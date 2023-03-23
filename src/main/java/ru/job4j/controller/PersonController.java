@@ -51,8 +51,8 @@ public class PersonController {
             throw new NullPointerException("Login or password is empty");
         }
            return persons.save(person) == null
-                   ? ResponseEntity.ok().build()
-                   : ResponseEntity.internalServerError().build();
+                   ? ResponseEntity.internalServerError().build()
+                   : ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
