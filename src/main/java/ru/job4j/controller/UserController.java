@@ -6,12 +6,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.domain.Person;
+import ru.job4j.domain.marker.Operation;
 import ru.job4j.service.PersonService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +30,8 @@ public class UserController {
     private BCryptPasswordEncoder encoder;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<String> signUp(@RequestBody Person person) throws Exception {
+    @Validated(Operation.OnCreate.class)
+    public ResponseEntity<String> signUp(@Valid @RequestBody Person person) throws Exception {
         if ("con".equals(person.getUsername())) {
             throw new Exception("You are not Bill Gates");
         }
@@ -60,7 +64,8 @@ public class UserController {
     }
 
     @PatchMapping("/patch")
-    public ResponseEntity<String> patch(@RequestBody Person person) {
+    @Validated(Operation.OnUpdate.class)
+    public ResponseEntity<String> patch(@Valid @RequestBody Person person) {
         if (person.getUsername().isEmpty() || person.getPassword().isEmpty()) {
             throw new NullPointerException("Login or password is empty");
         }

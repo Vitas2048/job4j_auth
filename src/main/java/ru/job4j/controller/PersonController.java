@@ -3,11 +3,14 @@ package ru.job4j.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.job4j.domain.Person;
+import ru.job4j.domain.marker.Operation;
 import ru.job4j.repository.PersonRepository;
 import ru.job4j.service.PersonService;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -36,7 +39,8 @@ public class PersonController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Person> create(@RequestBody Person person) {
+    @Validated({Operation.OnCreate.class})
+    public ResponseEntity<Person> create(@Valid @RequestBody Person person) {
         if (person.getUsername().isEmpty() || person.getPassword().isEmpty()) {
             throw new NullPointerException("Login or password is empty");
         }
@@ -46,7 +50,8 @@ public class PersonController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<Void> update(@RequestBody Person person) {
+    @Validated({Operation.OnUpdate.class})
+    public ResponseEntity<Void> update(@Valid @RequestBody Person person) {
         if (person.getUsername().isEmpty() || person.getPassword().isEmpty()) {
             throw new NullPointerException("Login or password is empty");
         }
